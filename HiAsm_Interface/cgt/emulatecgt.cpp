@@ -223,7 +223,7 @@ static const char *EXPORT propGetName(Property *prop)
 }
 
 //! Возвращает значение свойства в виде указателя на данные.
-static Value *EXPORT propGetValue(Property *prop)
+static const Value *EXPORT propGetValue(Property *prop)
 {
     return prop->getPtrValue();
 }
@@ -592,7 +592,7 @@ static int EXPORT propIsTranslate(Element *element, Property *prop)
     return 0;
 }
 
-/*
+/*!
  * Возвращает указатель на элемент, прилинкованного к указанному свойству.
  * В буфер buf пишется имя интерфейса элемента.
  * Например в строке из INI: FormFastening=Форма для привязки позиции|20|(empty)|ControlManager
@@ -610,30 +610,23 @@ static Element *EXPORT propGetLinkedElementInfo(Element *element, Property *prop
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ элемент - CI_PolyMulti ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //! Возвращает указатель на контейнер по его индексу из элемента.
 static Container *EXPORT elGetSDKByIndex(Element *element, int index)
 {
     return element->getContainerByIndex(index);
 }
 
-//! Возвращает количаство контейнеров полиморфного элемента(CI_PolyMulti).
-static qint32 EXPORT elGetSDKCount(Element *element)
+//! Возвращает количество контейнеров полиморфного элемента(CI_PolyMulti).
+static int EXPORT elGetSDKCount(Element *element)
 {
-    const Element *e = m_model->getElementById(element);
-    if (!e)
-        return 0;
-
-    return e->getCountContainers();
+    return element->getCountContainers();
 }
 
 //! Возвращает имя контейнера по индексу.
-static const char *EXPORT elGetSDKName(Element *element, qint32 index)
+static const char *EXPORT elGetSDKName(Element *element, int index)
 {
-    const Element *e = m_model->getElementById(element);
-    if (!e)
-        return nullptr;
-
-    const Container *c = e->getContainerByIndex(index);
+    const Container *c = element->getContainerByIndex(index);
     if (!c)
         return nullptr;
 
@@ -641,46 +634,33 @@ static const char *EXPORT elGetSDKName(Element *element, qint32 index)
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ схема ~~~~~~~~~~~~~~~~~~~~~~~~~~
-//! Возвращает элемент родитель для данного SDK.
+
+//! Возвращает указатель на элемент родитель для данного SDK.
 //! Возвращает 0, если контейнер не имеет родителя.
-static qint32 EXPORT sdkGetParent(Container *container)
+static Element *EXPORT sdkGetParent(Container *container)
 {
-    const Container *c = m_model->getContainerById(container);
-    Q_CHECK_PTR(c);
-
-    Element *e = c->getParent();
-    if (!e)
-        return 0;
-
-    return e->getId();
+    return container->getParent();
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ элемент ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //! Возвращает интерфейсы, предоставляемые элементом.
 //! Содержимое поля Interfaces= из конфигурации элемента.
 static const char *EXPORT elGetInterface(Element *element)
 {
-    const Element *e = m_model->getElementById(element);
-    if (!e)
-        return nullptr;
-
-    return fcgt::strToCString(e->getInterface());
+    return fcgt::strToCString(element->getInterface());
 }
 
 //! Возвращает список классов, от которых наследуется элемент
 //! Содержимое поля Inherit= из конфигурации элемента.
 static const char *EXPORT elGetInherit(Element *element)
 {
-    const Element *e = m_model->getElementById(element);
-    if (!e)
-        return nullptr;
-
-    return fcgt::strToCString(e->getInherit());
+    return fcgt::strToCString(element->getInherit());
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ ресурсы ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //! Возвращает 1, если список ресурсов пуст, и 0 в противном случае.
-static qint32 EXPORT resEmpty()
+static int EXPORT resEmpty()
 {
     return m_model->resIsEmpty();
 }
@@ -694,8 +674,9 @@ static qint32 EXPORT resSetPref(const char *pref)
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ информационные сообщения ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //! Добавляет информацию в информационную панель
-static qint32 EXPORT _Error(qint32 line, Element *element, const char *text)
+static int EXPORT _Error(int line, Element *element, const char *text)
 {
     Q_UNUSED(line)
     Q_UNUSED(element)
@@ -704,18 +685,20 @@ static qint32 EXPORT _Error(qint32 line, Element *element, const char *text)
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ элемент ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //! Возвращает ID группы, к которой принадлежит элемент и 0, если группа отсутствует
 //[deprecated]
-static qint32 EXPORT elGetGroup(Element *element)
+static int EXPORT elGetGroup(Element *element)
 {
     Q_UNUSED(element)
     return 0;
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ свойства элемента ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //! Сохраняет данные свойства в файл.
 //[deprecated]
-static qint32 EXPORT propSaveToFile(Property *prop, const char *fileName)
+static int EXPORT propSaveToFile(Property *prop, const char *fileName)
 {
     Q_UNUSED(prop)
     Q_UNUSED(fileName)
@@ -820,7 +803,7 @@ void EmulateCgt::setSceneModel(SceneModel *model)
 }
 
 //Получаем массив указателей на функции
-void *EmulateCgt::getCgt()
+TCodeGenTools *EmulateCgt::getCgt()
 {
     return reinterpret_cast<TCodeGenTools *>(emulateCgt);
 }

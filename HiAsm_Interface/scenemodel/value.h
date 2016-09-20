@@ -9,29 +9,21 @@
 #include <QObject>
 #include <QVariant>
 
-class Value
+class Value : public QVariant
 {
     //Self
     DataType m_type = data_null;
-    QVariant m_value;
-
-public:
-    explicit Value(DataType type = data_null, const QVariant &value = QVariant());
 
 public:
     //Self
     void setType(DataType type);
     DataType getType() const;
 
-    //Value
-    void setValue(const QVariant &value);
-    QVariant getValue() const;
-
     //Byte
     uchar toByte() const;
 
     //Int
-    qint32 toInt() const;
+    int toInt() const;
 
     //Real
     qreal toReal() const;

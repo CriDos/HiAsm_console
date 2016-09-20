@@ -15,6 +15,9 @@
 //Qt
 #include <QDebug>
 
+Package *SceneModel::m_package{};
+QMap<qint32, Element *> SceneModel::m_elementList;
+
 SceneModel::SceneModel(PackageManager *package, QObject *parent)
     : QObject(parent)
     , m_packageManager(package)
@@ -72,19 +75,19 @@ void SceneModel::setRootContainer(Container *container)
     m_rootContainer = container;
 }
 
-const char *SceneModel::addStreamRes(Property *id_prop)
+const char *SceneModel::addStreamRes(Property *prop)
 {
     QString ret;
-    if (!id_prop)
+    if (!prop)
         return nullptr;
 
     QString nameTypeRes;
     QString fileName;
     QString ext;
-    const Value *v = id_prop->getValue();
-    switch (id_prop->getType()) {
+    const Value &v = prop->getValue();
+    switch (prop->getType()) {
     case data_icon: {
-        if (v->getValue().isNull())
+        if (v.isNull())
             return fcgt::strToCString("ASMA");
 
         nameTypeRes = "ICON";
@@ -99,7 +102,7 @@ const char *SceneModel::addStreamRes(Property *id_prop)
         break;
     }
     case data_bitmap: {
-        if (v->getValue().isNull())
+        if (v.isNull())
             return nullptr;
 
         nameTypeRes = "BITMAP";
@@ -117,7 +120,7 @@ const char *SceneModel::addStreamRes(Property *id_prop)
     QString SEP = QDir::separator();
     QString CURRENT_PATH = QDir::currentPath();
 
-    QByteArray resData = v->getValue().toByteArray();
+    QByteArray resData = v.toByteArray();
     QString suffix = QString::number(m_resourcesForCompile.size());
     QString fileNameRes = fileName + suffix;
     QString fullFileNameRes = fileName + suffix + ext;

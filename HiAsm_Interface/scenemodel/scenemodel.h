@@ -123,4 +123,5 @@ public:
     void setCompiler(const QString &compiler);
 };
 
+
 Q_DECLARE_METATYPE(SceneModel *)

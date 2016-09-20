@@ -6,12 +6,6 @@
 
 //Qt
 
-Value::Value(DataType type, const QVariant &value)
-    : m_type(type)
-    , m_value(value)
-{
-}
-
 void Value::setType(DataType type)
 {
     m_type = type;
@@ -22,74 +16,64 @@ DataType Value::getType() const
     return m_type;
 }
 
-void Value::setValue(const QVariant &value)
-{
-    m_value = value;
-}
-
-QVariant Value::getValue() const
-{
-    return m_value;
-}
-
 uchar Value::toByte() const
 {
-    if (!m_value.canConvert<uchar>())
+    if (!canConvert<uchar>())
         return uchar();
 
-    return m_value.value<uchar>();
+    return value<uchar>();
 }
 
-qint32 Value::toInt() const
+int Value::toInt() const
 {
-    if (!m_value.canConvert<qint32>())
-        return qint32();
+    if (!canConvert<int>())
+        return int();
 
-    return m_value.value<qint32>();
+    return value<int>();
 }
 
 qreal Value::toReal() const
 {
-    if (!m_value.canConvert<qreal>())
+    if (!canConvert<qreal>())
         return qreal();
 
-    return m_value.value<qreal>();
+    return value<qreal>();
 }
 
 QString Value::toString() const
 {
-    if (!m_value.canConvert<QString>())
+    if (!canConvert<QString>())
         return QString();
 
-    return m_value.value<QString>();
+    return value<QString>();
 }
 
 DataType Value::getTypeArrayItem() const
 {
-    if (!m_value.canConvert<SharedArrayValue>())
+    if (!canConvert<SharedArrayValue>())
         return data_null;
 
-    return m_value.value<SharedArrayValue>()->getType();
+    return value<SharedArrayValue>()->getType();
 }
 
 int Value::getArraySize() const
 {
-    if (!m_value.canConvert<SharedArrayValue>())
+    if (!canConvert<SharedArrayValue>())
         return -1;
 
-    return m_value.value<SharedArrayValue>()->size();
+    return value<SharedArrayValue>()->size();
 }
 
 SharedArrayItem Value::getArrayItemByIndex(int index) const
 {
-    if (!m_value.canConvert<SharedArrayValue>())
-        return SharedArrayValue();
+    if (!canConvert<SharedArrayValue>())
+        return SharedArrayItem();
 
-    const SharedArrayValue &arrayValues = m_value.value<SharedArrayValue>();
+    const SharedArrayValue &arrayValues = value<SharedArrayValue>();
     if (index < arrayValues->size())
         return arrayValues->at(index);
 
-    return SharedArrayValue();
+    return SharedArrayItem();
 }
 
 QString Value::getArrayItemName(int index) const
@@ -103,16 +87,16 @@ QString Value::getArrayItemName(int index) const
 
 SharedValueFont Value::toFont() const
 {
-    if (!m_value.canConvert<SharedValueFont>())
+    if (!canConvert<SharedValueFont>())
         return SharedValueFont();
 
-    return m_value.value<SharedValueFont>();
+    return value<SharedValueFont>();
 }
 
 SharedLinkedElementInfo Value::toLinkedElementInfo() const
 {
-    if (!m_value.canConvert<SharedLinkedElementInfo>())
+    if (!canConvert<SharedLinkedElementInfo>())
         return SharedLinkedElementInfo();
 
-    return m_value.value<SharedLinkedElementInfo>();
+    return value<SharedLinkedElementInfo>();
 }

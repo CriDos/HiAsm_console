@@ -66,7 +66,7 @@ Value Property::getValue() const
     return m_value;
 }
 
-Value *Property::getPtrValue() const
+const Value *Property::getPtrValue() const
 {
     return &m_value;
 }

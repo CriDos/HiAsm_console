@@ -46,7 +46,7 @@ public:
     //Value
     void setValue(const QVariant &data);
     Value getValue() const;
-    Value *getPtrValue() const;
+    const Value *getPtrValue() const;
     uchar toByte() const;
     qint32 toInt() const;
     qreal toReal() const;
