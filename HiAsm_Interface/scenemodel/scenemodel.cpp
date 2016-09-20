@@ -259,16 +259,6 @@ void SceneModel::getCgtParam(CgtParams index, void *buf) const
     }
 }
 
-bool SceneModel::getIsDebug() const
-{
-    return m_isDebug;
-}
-
-void SceneModel::setIsDebug(bool isDebug)
-{
-    m_isDebug = isDebug;
-}
-
 qint32 SceneModel::getDebugMode() const
 {
     return m_debugMode;

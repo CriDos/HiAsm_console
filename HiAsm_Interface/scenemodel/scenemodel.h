@@ -36,7 +36,6 @@ private:
     QMap<QString, QString> m_resourcesForCompile;
 
     //Параметры CGT
-    bool m_isDebug{};
     qint32 m_debugMode = false;
     qint32 m_debugServerPort = 120;
     qint32 m_debugClientPort = 121;
@@ -86,9 +85,6 @@ public:
 
     //Параметры CGT
     void getCgtParam(CgtParams index, void *buf) const;
-
-    bool getIsDebug() const;
-    void setIsDebug(bool isDebug);
 
     qint32 getDebugMode() const;
     void setDebugMode(qint32 debugMode);

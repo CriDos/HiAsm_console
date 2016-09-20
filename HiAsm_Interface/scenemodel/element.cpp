@@ -82,12 +82,12 @@ bool Element::getLinkIs() const
     return m_linkIs;
 }
 
-void Element::setLinkMain(qint32 linkMain)
+void Element::setLinkMain(Element *linkMain)
 {
     m_linkMain = linkMain;
 }
 
-qint32 Element::getLinkMain() const
+Element *Element::getLinkMain() const
 {
     return m_linkMain;
 }

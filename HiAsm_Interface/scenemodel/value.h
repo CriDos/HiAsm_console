@@ -9,28 +9,19 @@
 #include <QObject>
 #include <QVariant>
 
-class Value {
-
-private:
+class Value
+{
     //Self
     DataType m_type = data_null;
     QVariant m_value;
-    QString m_name;
-    DataType m_subType = data_null;
 
 public:
-    explicit Value(DataType type = data_null, const QVariant &value = QVariant(),
-        const QString &name = QString(), DataType subType = data_null);
+    explicit Value(DataType type = data_null, const QVariant &value = QVariant());
 
 public:
-    //Serialize
-    QVariantMap serialize() const;
-
     //Self
     void setType(DataType type);
     DataType getType() const;
-    void setName(const QString &name);
-    QString getName() const;
 
     //Value
     void setValue(const QVariant &value);
@@ -48,16 +39,10 @@ public:
     //String
     QString toString() const;
 
-    //SubType
-    void setSubType(DataType type);
-    DataType getSubType() const;
-
-    //Data
-    DataType getDataType() const;
-
     //Array
-    qint32 getArraySize() const;
-    SharedValue getArrayItemByIndex(int index) const;
+    DataType getTypeArrayItem() const;
+    int getArraySize() const;
+    SharedArrayItem getArrayItemByIndex(int index) const;
     QString getArrayItemName(int index) const;
 
     //Font

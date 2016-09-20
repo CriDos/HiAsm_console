@@ -28,7 +28,7 @@ private:
     ElementFlgs m_flags{};
     qint32 m_group{};
     bool m_linkIs{};
-    qint32 m_linkMain{};
+    Element *m_linkMain{};
     qint32 m_posX{};
     qint32 m_posY{};
     qint32 m_sizeW{};
@@ -72,8 +72,8 @@ public:
     void setLinkIs(bool linkIs);
     bool getLinkIs() const;
 
-    void setLinkMain(qint32 linkMain);
-    qint32 getLinkMain() const;
+    void setLinkMain(Element *linkMain);
+    Element *getLinkMain() const;
 
     void setPosX(qint32 posX);
     qint32 getPosX() const;

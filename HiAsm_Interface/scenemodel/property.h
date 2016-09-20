@@ -44,12 +44,9 @@ public:
     DataType getType() const;
 
     //Value
-    void setValue(DataType type = data_null,
-                  const QVariant &data = QVariant(),
-                  const QString &name = QString(),
-                  DataType arrayType = data_null);
-
-    Value *getValue() const;
+    void setValue(const QVariant &data);
+    Value getValue() const;
+    Value *getPtrValue() const;
     uchar toByte() const;
     qint32 toInt() const;
     qreal toReal() const;

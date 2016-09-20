@@ -19,7 +19,6 @@ Property::Property(DataType type, const QVariant &data, const QString &name)
     m_type = type;
     m_value.setType(type);
     m_value.setValue(data);
-    m_value.setName(name);
 }
 
 void Property::setName(const QString &name)
@@ -57,15 +56,17 @@ bool Property::getIsDefProp() const
     return m_isDefProp;
 }
 
-void Property::setValue(DataType type, const QVariant &data, const QString &name, DataType arrayType)
+void Property::setValue(const QVariant &data)
 {
-    m_value.setType(type);
     m_value.setValue(data);
-    m_value.setName(name);
-    m_value.setSubType(arrayType);
 }
 
-Value *Property::getValue() const
+Value Property::getValue() const
+{
+    return m_value;
+}
+
+Value *Property::getPtrValue() const
 {
     return &m_value;
 }
