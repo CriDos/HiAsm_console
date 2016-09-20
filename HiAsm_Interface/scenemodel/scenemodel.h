@@ -3,16 +3,16 @@
 //Project
 #include "cgt/CGTShare.h"
 #include "package/packagemanager.h"
-#include "property.h"
 
 //STL
 
 //Qt
 #include <QObject>
-#include <QSet>
+#include <QMap>
 
 class Container;
 class Element;
+class Property;
 
 class SceneModel : public QObject
 {
@@ -122,6 +122,3 @@ public:
     QString getCompiler() const;
     void setCompiler(const QString &compiler);
 };
-
-
-Q_DECLARE_METATYPE(SceneModel *)

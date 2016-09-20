@@ -370,7 +370,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
             continue;
         }
         case LineType::END_SDK: {
-            *prev = i + 1;
+            *prev = i;
             return container;
         }
         case SHALoader::Null:

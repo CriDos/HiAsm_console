@@ -44,6 +44,52 @@ int main(int argc, char *argv[])
     SceneModel model(manager);
     model.loadFromSha("test.sha");
 
+    const QString codeGenFile = "CodeGen.dll";
+    const QString makeExe = "make_exe.dll";
+    const QString packagePath = QDir::toNativeSeparators(QDir::currentPath() + QDir::separator() + "packages/delphi/");
+    const QString codePath = QDir::toNativeSeparators(packagePath + "code/");
+    const QString makePath = QDir::toNativeSeparators(packagePath + "make/");
+    const QString fullPathCodeGen = packagePath + codeGenFile;
+    const QString fullPathMakeExe = makePath + makeExe;
+
+    //ru Загружаем CodeGen в память
+    if (!QFile::exists(fullPathCodeGen)) {
+        qCritical(qUtf8Printable(QString("%1 library not found!").arg(qPrintable(codeGenFile))));
+    }
+    QLibrary libCodeGen(fullPathCodeGen);
+    if (!libCodeGen.load()) {
+        qCritical("%s library not found!", qPrintable(codeGenFile));
+        exit(0);
+    }
+    qInfo("%s library successfully loaded.", qPrintable(codeGenFile));
+
+    TBuildPrepareProc buildPrepareProcLib = nullptr;
+    TBuildProcessProc buildProcessProcLib = nullptr;
+    TCheckVersionProc checkVersionProcLib = nullptr;
+
+    //ru Определение функций кодогенератора
+    buildPrepareProcLib = reinterpret_cast<TBuildPrepareProc>(libCodeGen.resolve("buildPrepareProc"));
+    buildProcessProcLib = reinterpret_cast<TBuildProcessProc>(libCodeGen.resolve("buildProcessProc"));
+    checkVersionProcLib = reinterpret_cast<TCheckVersionProc>(libCodeGen.resolve("CheckVersionProc"));
+
+    QString fullPathProjectFile = codePath + model.getProjectName() + ".dpr";
+
+    qInfo("Set params for model.");
+    model.setProjectPath(QDir::currentPath());
+    model.setCodePath(codePath);
+
+    qInfo("Initialize EmulateCgt and TBuildProcessRec.");
+    EmulateCgt::setSceneModel(&model);
+
+    ProxyCgt::setProxiedCgt(EmulateCgt::getCgt());
+    qInfo("Call func buildProcessProc from CodeGen.dll...");
+    TBuildProcessRec rec(ProxyCgt::getCgt(), model.getRootContainer());
+    CgResult resultBuild = buildProcessProcLib(rec);
+    if (resultBuild != CG_SUCCESS) {
+        qCritical() << "Error build project: buildProcessProc return" << CgResultMap[resultBuild];
+        exit(0);
+    }
+
     /*
     const QString codeGenFile = "CodeGen.dll";
     const QString makeExe = "make_exe.dll";

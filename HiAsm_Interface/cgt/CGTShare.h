@@ -304,11 +304,18 @@ struct THiAsmVersion {
     qint32 build{};
 };
 
+class Container;
 struct TCodeGenTools;
 struct TBuildProcessRec {
     TCodeGenTools *cgt{};
-    qint32 sdk{};
+    Container *sdk{};
     void *result{};
+
+    explicit TBuildProcessRec(TCodeGenTools *_cgt, Container *_sdk)
+        : cgt(_cgt)
+        , sdk(_sdk)
+    {
+    }
 };
 
 typedef CgResult (*TBuildPrepareProc)(void *params);
