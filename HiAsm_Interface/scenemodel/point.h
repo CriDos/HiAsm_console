@@ -12,7 +12,8 @@
 class SceneModel;
 class Element;
 
-class Point : public QObject {
+class Point : public QObject
+{
     Q_OBJECT
     Q_DISABLE_COPY(Point)
 
@@ -24,30 +25,14 @@ private:
     QString m_dpeName;
     QString m_info;
     struct {
-        qint32 element{};
-        QString point;
+        qint32 elementId{};
+        QString namePoint;
     } m_connectPoint;
 
-    //CGT
-    TCodeGenTools *m_cgt{};
-
-    //Model
-    SceneModel *m_model{};
-
-private:
-    Q_PROPERTY(SceneModel *model READ getModel)
-    Q_PROPERTY(TCodeGenTools *cgt READ getCgt)
+public:
+    explicit Point(QObject *parent);
 
 public:
-    explicit Point(qint32 id_point, QObject *parent);
-
-private:
-    void collectingData(qint32 id_point);
-
-public:
-    //Serialize
-    QVariantMap serialize() const;
-
     //Self
     Element *getParent() const;
 
@@ -57,7 +42,7 @@ public:
     void setDataType(DataType dataType);
     DataType getDataType() const;
 
-    qint32 getIndex() const;
+    int getIndex() const;
 
     void setName(const QString &name);
     QString getName() const;
@@ -70,10 +55,4 @@ public:
 
     Point *getLinkPoint() const;
     Point *getRLinkPoint() const;
-
-    //CGT
-    TCodeGenTools *getCgt();
-
-    //Model
-    SceneModel *getModel();
 };

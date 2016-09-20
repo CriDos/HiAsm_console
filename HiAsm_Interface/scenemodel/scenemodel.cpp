@@ -25,134 +25,11 @@ SceneModel::~SceneModel()
 {
 }
 
-void SceneModel::collectingData(qint32 id_sdk)
-{
-    m_isDebug = m_cgt->isDebug(id_sdk);
-    qint32 id_element = m_cgt->sdkGetElement(id_sdk, 0);
-
-    //ru Тут мощная магия, однако;D
-    qint32 iBuf{};
-    QByteArray buf("", 512);
-
-    buf.fill('\0');
-    reinterpret_cast<qint32 *>(buf.data())[0] = id_element; //-V206
-    m_cgt->GetParam(PARAM_CODE_PATH, buf.data());
-    m_codePath = QString::fromLocal8Bit(buf);
-
-    m_cgt->GetParam(PARAM_DEBUG_MODE, &iBuf);
-    m_debugMode = iBuf;
-
-    m_cgt->GetParam(PARAM_DEBUG_SERVER_PORT, &iBuf);
-    m_debugServerPort = iBuf;
-
-    m_cgt->GetParam(PARAM_DEBUG_CLIENT_PORT, &iBuf);
-    m_debugClientPort = iBuf;
-
-    buf.fill('\0');
-    reinterpret_cast<qint32 *>(buf.data())[0] = id_element; //-V206
-    m_cgt->GetParam(PARAM_PROJECT_PATH, buf.data());
-    m_projectPath = QString::fromLocal8Bit(buf);
-
-    const char f[] = "%mj.%mn.%bl";
-    char *tmpBuf = new char[strlen(f) + 1];
-    strcpy(tmpBuf, f);
-    m_cgt->GetParam(PARAM_HIASM_VERSION, tmpBuf);
-    m_hiasmVersion = QString::fromLatin1(tmpBuf);
-    delete[] tmpBuf;
-
-    buf.fill('\0');
-    m_cgt->GetParam(PARAM_USER_NAME, buf.data());
-    m_userName = QString::fromLocal8Bit(buf);
-
-    buf.fill('\0');
-    m_cgt->GetParam(PARAM_USER_MAIL, buf.data());
-    m_userMail = QString::fromLocal8Bit(buf);
-
-    buf.fill('\0');
-    reinterpret_cast<qint32 *>(buf.data())[0] = id_element; //-V206
-    m_cgt->GetParam(PARAM_PROJECT_NAME, buf.data());
-    m_projectName = QString::fromLocal8Bit(buf);
-
-    qint32 tmpW[1] = {reinterpret_cast<qint32>(id_element)};
-    m_cgt->GetParam(PARAM_SDE_WIDTH, tmpW);
-    m_sdeWidth = tmpW[0];
-
-    qint32 tmpH[1] = {reinterpret_cast<qint32>(id_element)};
-    m_cgt->GetParam(PARAM_SDE_HEIGHT, tmpH);
-    m_sdeHeight = tmpH[0];
-
-    buf.fill('\0');
-    reinterpret_cast<qint32 *>(buf.data())[0] = id_element; //-V206
-    m_cgt->GetParam(PARAM_COMPILER, buf.data());
-    m_compiler = QString::fromLocal8Bit(buf);
-}
-
-QJsonDocument SceneModel::serialize()
-{
-    QVariantMap cgtParams;
-    cgtParams.insert("CODE_PATH", m_codePath);
-    cgtParams.insert("DEBUG_MODE", m_debugMode);
-    cgtParams.insert("DEBUG_SERVER_PORT", m_debugServerPort);
-    cgtParams.insert("DEBUG_CLIENT_PORT", m_debugClientPort);
-    cgtParams.insert("PROJECT_PATH", m_projectPath);
-    cgtParams.insert("HIASM_VERSION", m_hiasmVersion);
-    cgtParams.insert("USER_NAME", m_userName);
-    cgtParams.insert("USER_MAIL", m_userMail);
-    cgtParams.insert("PROJECT_NAME", m_projectName);
-    cgtParams.insert("SDE_WIDTH", m_sdeWidth);
-    cgtParams.insert("SDE_HEIGHT", m_sdeHeight);
-    cgtParams.insert("COMPILER", m_compiler);
-
-    QVariantMap model;
-    model.insert("CGTParams", cgtParams);
-    model.insert("Container", m_container->serialize());
-
-    return QJsonDocument::fromVariant(model);
-}
-
-TCodeGenTools *SceneModel::getCgt()
-{
-    return m_cgt;
-}
-
-SceneModel *SceneModel::getModel()
-{
-    return this;
-}
-
-void SceneModel::initFromCgt(TCodeGenTools *cgt, qint32 idMainSDK)
-{
-    m_cgt = cgt;
-
-    //ru Собираем данные о среде
-    collectingData(idMainSDK);
-
-    //ru Запуск процесса сборка данных о схеме
-    m_container = new Container(idMainSDK, this);
-}
-
-bool SceneModel::saveModel(const QString &filePath)
-{
-    QJsonDocument doc = serialize();
-    QFile file(filePath);
-    if (!file.open(QIODevice::WriteOnly))
-        return false;
-
-    file.write(doc.toJson());
-    file.close();
-    return true;
-}
-
 bool SceneModel::loadFromSha(const QString &filePath)
 {
     SHALoader shaLoader(filePath, this);
     shaLoader.loadSha();
     return shaLoader.parse();
-}
-
-void SceneModel::setPackage(Package *package)
-{
-    m_package = package;
 }
 
 Package *SceneModel::getPackage()
@@ -171,64 +48,28 @@ bool SceneModel::loadPackage(const QString &name)
     return true;
 }
 
-void SceneModel::addContainerToMap(Container *id_sdk)
+void SceneModel::addElementToList(Element *element)
 {
-    if (id_sdk)
-        m_mapContainers.insert(id_sdk->getId(), id_sdk);
+    if (element)
+        m_elementList.insert(element->getId(), element);
 }
 
-void SceneModel::addElementToMap(Element *id_element)
+Element *SceneModel::getElementFromEId(qint32 id_element)
 {
-    if (id_element)
-        m_mapElements.insert(id_element->getId(), id_element);
+    return m_elementList[id_element];
 }
 
-Container *SceneModel::getContainerById(qint32 id_sdk) const
+Container *SceneModel::getRootContainer() const
 {
-    return m_mapContainers[id_sdk];
-}
-
-qint32 SceneModel::getCountElementsInContainer(qint32 id_sdk) const
-{
-    const Container *c = getContainerById(id_sdk);
-    if (!c)
+    if (!m_rootContainer)
         return 0;
 
-    return c->getCountElements();
-}
-
-qint32 SceneModel::getIdRootContainer() const
-{
-    if (!m_container)
-        return 0;
-
-    return m_container->getId();
+    return m_rootContainer;
 }
 
 void SceneModel::setRootContainer(Container *container)
 {
-    m_container = container;
-}
-
-Element *SceneModel::getElementById(qint32 id_element) const
-{
-    return m_mapElements[id_element];
-}
-
-Element *SceneModel::getElementFromSDKByIndex(qint32 id_sdk, qint32 index) const
-{
-    const Container *c = getContainerById(id_sdk);
-    if (!c)
-        return nullptr;
-    return c->getElementByIndex(index);
-}
-
-qint32 SceneModel::getIdElementFromSDKByIndex(qint32 id_sdk, qint32 index) const
-{
-    const Container *c = getContainerById(id_sdk);
-    if (!c)
-        return 0;
-    return c->getIdElementByIndex(index);
+    m_rootContainer = container;
 }
 
 const char *SceneModel::addStreamRes(Property *id_prop)

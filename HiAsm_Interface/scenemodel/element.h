@@ -15,7 +15,8 @@ class Container;
 class Point;
 class Property;
 
-class Element : public QObject {
+class Element : public QObject
+{
     Q_OBJECT
     Q_DISABLE_COPY(Element)
 
@@ -39,12 +40,6 @@ private:
     QString m_infSub;
     SharedConfElement m_conf;
 
-    //CGT
-    TCodeGenTools *m_cgt{};
-
-    //Model
-    SceneModel *m_model{};
-
     //Container
     QVector<Container *> m_containers;
 
@@ -54,21 +49,10 @@ private:
     //Property
     QVector<Property *> m_properties;
 
-private:
-    Q_PROPERTY(SceneModel *model READ getModel)
-    Q_PROPERTY(TCodeGenTools *cgt READ getCgt)
+public:
+    explicit Element(const QString &name, int id_element, int X, int Y, QObject *parent);
 
 public:
-    explicit Element(const QString &name, qint32 id_element, qint32 X, qint32 Y, QObject *parent);
-    explicit Element(qint32 id_element, QObject *parent);
-
-private:
-    void collectingData();
-
-public:
-    //Serialize
-    QVariantMap serialize() const;
-
     //Self
     qint32 getId() const;
     Container *getParent() const;
@@ -118,38 +102,25 @@ public:
     void setInfSub(const QString &infSub);
     QString getInfSub() const;
 
-    //CGT
-    TCodeGenTools *getCgt();
-
-    //Model
-    SceneModel *getModel();
-
     //Container
-    qint32 getCountContainers() const;
+    int getCountContainers() const;
     Container *getContainer() const;
-    qint32 getIdContainer() const;
-    Container *getContainerByIndex(qint32 index) const;
-    qint32 getIdContainerByIndex(qint32 index) const;
+    Container *getContainerByIndex(int index) const;
     Container *addContainer(Container *container);
-    void removeContainer(qint32 index);
+    void removeContainer(int index);
 
     //Point
-    qint32 getCountPoints() const;
-    qint32 getPointIndexOfType(const Point *id_point) const;
-    Point *getPointByIndex(qint32 index) const;
-    Point *getIdPointByIndex(qint32 index) const;
+    int getCountPoints() const;
+    int getPointIndexOfType(const Point *point) const;
+    Point *getPointByIndex(int index) const;
     Point *getPointByName(const QString &name) const;
-    Point *getIdPointByName(const QString &name) const;
     Point *addPoint(Point *point);
-    void removePoint(qint32 index);
+    void removePoint(int index);
 
     //Property
     qint32 getCountProps() const;
-    Property *getPropertyByIndex(qint32 index) const;
-    Property *getIdPropertyByIndex(qint32 index) const;
-    Property *getPropertyById(Property *id_prop) const;
+    Property *getPropertyByIndex(int index) const;
     Property *getPropertyByName(const QString &name) const;
-    Property *getIdPropertyByName(const QString &name) const;
-    Property *addProperty(Property *property);
-    void removeProperty(qint32 index);
+    Property *addProperty(Property *prop);
+    void removeProperty(int index);
 };

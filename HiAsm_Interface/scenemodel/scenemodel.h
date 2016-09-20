@@ -20,19 +20,15 @@ class SceneModel : public QObject
     Q_DISABLE_COPY(SceneModel)
 
 private:
-    //CGT
-    TCodeGenTools *m_cgt{};
-
     //Package
-    Package *m_package{};
+    static Package *m_package;
     PackageManager *m_packageManager{};
 
-    //Map
-    QMap<qint32, Container *> m_mapContainers;
-    QMap<qint32, Element *> m_mapElements;
+    //List
+    static QMap<qint32, Element *> m_elementList;
 
     //Container
-    Container *m_container{};
+    Container *m_rootContainer{};
 
     //Resource
     const QString m_resourcesDir = "resources";
@@ -54,54 +50,30 @@ private:
     QString m_projectName;
     QString m_compiler;
 
-private:
-    Q_PROPERTY(TCodeGenTools *cgt READ getCgt)
-    Q_PROPERTY(SceneModel *model READ getModel)
-
 public:
     explicit SceneModel(PackageManager *package, QObject *parent = 0);
     virtual ~SceneModel();
 
-private:
-    void collectingData(qint32 id_sdk);
-
 public:
-    qint32 genId()
+    static int genId()
     {
         return 0;
     }
 
-    //Serialization
-    QJsonDocument serialize();
-
-    //CGT
-    TCodeGenTools *getCgt();
-
     //Model
-    SceneModel *getModel();
-    void initFromCgt(TCodeGenTools *cgt, qint32 idMainSDK);
-    bool saveModel(const QString &filePath);
     bool loadFromSha(const QString &filePath);
 
     //Package
-    void setPackage(Package *package);
-    Package *getPackage();
+    static Package *getPackage();
     bool loadPackage(const QString &name);
 
-    //Map
-    void addContainerToMap(Container *id_sdk);
-    void addElementToMap(Element *id_element);
+    //Elements
+    static void addElementToList(Element *element);
+    static Element *getElementFromEId(qint32 id_element);
 
     //Container
-    Container *getContainerById(qint32 id_sdk) const;
-    qint32 getCountElementsInContainer(qint32 id_sdk) const;
-    qint32 getIdRootContainer() const;
+    Container *getRootContainer() const;
     void setRootContainer(Container *container);
-
-    //Element
-    Element *getElementById(qint32 id_element) const;
-    Element *getElementFromSDKByIndex(qint32 id_sdk, qint32 index) const;
-    qint32 getIdElementFromSDKByIndex(qint32 id_sdk, qint32 index) const;
 
     //Resource
     const char *addStreamRes(Property *id_prop);
