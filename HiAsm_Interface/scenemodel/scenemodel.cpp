@@ -31,8 +31,8 @@ SceneModel::~SceneModel()
 bool SceneModel::loadFromSha(const QString &filePath)
 {
     SHALoader shaLoader(filePath, this);
-    shaLoader.loadSha();
-    return shaLoader.parse();
+    connect(&shaLoader, &SHALoader::onError, this, &SceneModel::onError);
+    return shaLoader.loadSha();
 }
 
 Package *SceneModel::getPackage()

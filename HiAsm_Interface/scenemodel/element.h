@@ -24,20 +24,14 @@ private:
     //Self
     qint32 m_id{};
     qint32 m_userData{};
-    ElementClass m_classIndex{};
     ElementFlgs m_flags{};
-    qint32 m_group{};
     bool m_linkIs{};
     Element *m_linkMain{};
     qint32 m_posX{};
     qint32 m_posY{};
     qint32 m_sizeW{};
     qint32 m_sizeH{};
-    QString m_className;
     QString m_codeName;
-    QString m_interface;
-    QString m_inherit;
-    QString m_infSub;
     SharedConfElement m_conf;
 
     //Container
@@ -60,14 +54,10 @@ public:
     void setUserData(qint32 userData);
     qint32 getUserData() const;
 
-    void setClassIndex(ElementClass classIndex);
     ElementClass getClassIndex();
 
     void setFlags(const ElementFlgs &flags);
     ElementFlags getFlags() const;
-
-    void setGroup(qint32 group);
-    qint32 getGroup() const;
 
     void setLinkIs(bool linkIs);
     bool getLinkIs() const;
@@ -87,19 +77,13 @@ public:
     void setSizeH(qint32 sizeH);
     qint32 getSizeH() const;
 
-    void setClassName(const QString &className);
     QString getClassName() const;
 
     void setCodeName(const QString &name);
     QString getCodeName() const;
 
-    void setInterface(const QString &interface);
-    QString getInterface() const;
-
-    void setInherit(const QString &inherit);
+    QString getInterfaces() const;
     QString getInherit() const;
-
-    void setInfSub(const QString &infSub);
     QString getInfSub() const;
 
     //Container

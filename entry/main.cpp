@@ -41,8 +41,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(APP_VERSION);
 
     PackageManager *manager = new PackageManager();
-    SceneModel model(manager);
-    model.loadFromSha("test.sha");
+    SceneModel *model = new SceneModel(manager);
+    QObject::connect(model, &SceneModel::onError, [](QString s) {
+        qWarning().noquote() << s;
+    });
+
+    if (!model->loadFromSha("test.sha")) {
+        qWarning() << "Ошибка загрузки файла схемы.";
+        return 0;
+    }
 
     const QString codeGenFile = "CodeGen.dll";
     const QString makeExe = "make_exe.dll";
@@ -72,18 +79,18 @@ int main(int argc, char *argv[])
     buildProcessProcLib = reinterpret_cast<TBuildProcessProc>(libCodeGen.resolve("buildProcessProc"));
     checkVersionProcLib = reinterpret_cast<TCheckVersionProc>(libCodeGen.resolve("CheckVersionProc"));
 
-    QString fullPathProjectFile = codePath + model.getProjectName() + ".dpr";
+    QString fullPathProjectFile = codePath + model->getProjectName() + ".dpr";
 
     qInfo("Set params for model.");
-    model.setProjectPath(QDir::currentPath());
-    model.setCodePath(codePath);
+    model->setProjectPath(QDir::currentPath());
+    model->setCodePath(codePath);
 
     qInfo("Initialize EmulateCgt and TBuildProcessRec.");
-    EmulateCgt::setSceneModel(&model);
+    EmulateCgt::setSceneModel(model);
 
     ProxyCgt::setProxiedCgt(EmulateCgt::getCgt());
     qInfo("Call func buildProcessProc from CodeGen.dll...");
-    TBuildProcessRec rec(ProxyCgt::getCgt(), model.getRootContainer());
+    TBuildProcessRec rec(ProxyCgt::getCgt(), model->getRootContainer());
     CgResult resultBuild = buildProcessProcLib(rec);
     if (resultBuild != CG_SUCCESS) {
         qCritical() << "Error build project: buildProcessProc return" << CgResultMap[resultBuild];

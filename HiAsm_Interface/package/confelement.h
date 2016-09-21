@@ -9,7 +9,8 @@
 //Qt
 #include <QtCore>
 
-class ConfElement {
+class ConfElement
+{
 public:
     enum TypeSection {
         ts_undefine,
@@ -35,7 +36,7 @@ private:
     QString m_mail;
 
     //Type
-    QString m_class;
+    ElementClass m_class;
     QStringList m_inherit;
     QString m_sub;
     QString m_info;
@@ -51,11 +52,11 @@ private:
     MapPropGroup m_group;
 
     //Properties
-    ListConfProps m_propList;
+    PropConfList m_propList;
 
     //Points
-    ListConfPoints m_pointList;
-    ListConfPoints m_hiddenPointList;
+    PointConfList m_pointList;
+    PointConfList m_hiddenPointList;
 
 public:
     explicit ConfElement(const QString &pathConf);
@@ -81,8 +82,8 @@ public:
     QString getMail() const;
     void setMail(const QString &mail);
 
-    QString getClass() const;
-    void setClass(const QString &nameClass);
+    ElementClass getClass() const;
+    void setClass(const ElementClass eclass);
 
     QStringList getInherits() const;
     void setInherits(const QStringList &inherit);
@@ -111,9 +112,9 @@ public:
     //Inherits
     void addInheritableData(Package *pack);
 
-    ListConfProps getProperties() const;
-    ListConfPoints getPoints() const;
-    ListConfPoints getHiddenPoints() const;
+    PropConfList getProperties() const;
+    PointConfList getPoints() const;
+    PointConfList getHiddenPoints() const;
 };
 typedef QSharedPointer<ConfElement> SharedConfElement;
 typedef QList<SharedConfElement> ConfElementList;

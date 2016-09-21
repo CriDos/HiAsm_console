@@ -648,7 +648,7 @@ static Element *EXPORT sdkGetParent(Container *container)
 //! Содержимое поля Interfaces= из конфигурации элемента.
 static const char *EXPORT elGetInterface(Element *element)
 {
-    return fcgt::strToCString(element->getInterface());
+    return fcgt::strToCString(element->getInterfaces());
 }
 
 //! Возвращает список классов, от которых наследуется элемент

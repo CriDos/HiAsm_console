@@ -11,17 +11,17 @@
 #include "QtCore"
 #include <QSharedPointer>
 
-struct ConfPoint {
+struct PointConf {
     QString name;
     QString prop;
     QString desc;
     PointType pointType;
     DataType dataType;
 };
-typedef QSharedPointer<ConfPoint> SharedConfPoint;
-typedef QList<SharedConfPoint> ListConfPoints;
+typedef QSharedPointer<PointConf> SharedPointConf;
+typedef QList<SharedPointConf> PointConfList;
 
-struct ConfProp { //-V802
+struct PropConf { //-V802
     QString name;
     QString desc;
     QString value;
@@ -31,8 +31,8 @@ struct ConfProp { //-V802
     bool makePoint = false;
     bool activated = false;
 };
-typedef QSharedPointer<ConfProp> SharedConfProp;
-typedef QList<SharedConfProp> ListConfProps;
+typedef QSharedPointer<PropConf> SharedPropConf;
+typedef QList<SharedPropConf> PropConfList;
 
 typedef QMap<QString, QString> MapPropGroup;
 

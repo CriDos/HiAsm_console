@@ -49,14 +49,14 @@ void ConfElement::setMail(const QString &mail)
     m_mail = mail;
 }
 
-QString ConfElement::getClass() const
+ElementClass ConfElement::getClass() const
 {
     return m_class;
 }
 
-void ConfElement::setClass(const QString &nameClass)
+void ConfElement::setClass(const ElementClass eclass)
 {
-    m_class = nameClass;
+    m_class = eclass;
 }
 
 QStringList ConfElement::getInherits() const
@@ -144,34 +144,34 @@ void ConfElement::addInheritableData(Package *pack)
     if (m_isInherited && !pack)
         return;
 
-    ListConfProps props;
+    PropConfList props;
     auto containsProp = [&props](const QString &name) {
-        for (const SharedConfProp &prop : props)
+        for (const SharedPropConf &prop : props)
             if (prop->name == name)
                 return true;
 
         return false;
     };
-    auto inheritProps = [&props, containsProp](const ListConfProps &inheritProps) {
-        for (const SharedConfProp &prop : inheritProps)
+    auto inheritProps = [&props, containsProp](const PropConfList &inheritProps) {
+        for (const SharedPropConf &prop : inheritProps)
             if (!containsProp(prop->name))
                 props.append(prop);
     };
 
-    auto containsPoint = [](const ListConfPoints &points, const QString &name) {
-        for (const SharedConfPoint &point : points)
+    auto containsPoint = [](const PointConfList &points, const QString &name) {
+        for (const SharedPointConf &point : points)
             if (point->name == name)
                 return true;
         return false;
     };
-    auto inheritPoints = [containsPoint](const ListConfPoints &inheritPoints, ListConfPoints &points) {
-        for (const SharedConfPoint &point : inheritPoints)
+    auto inheritPoints = [containsPoint](const PointConfList &inheritPoints, PointConfList &points) {
+        for (const SharedPointConf &point : inheritPoints)
             if (!containsPoint(points, point->name))
                 points.append(point);
     };
 
-    ListConfPoints hiddenPoints;
-    ListConfPoints points;
+    PointConfList hiddenPoints;
+    PointConfList points;
     for (const QString &name : m_inherit) {
         SharedConfElement e = pack->getElementByName(name);
         e->addInheritableData(pack);
@@ -195,17 +195,17 @@ void ConfElement::addInheritableData(Package *pack)
     m_isInherited = true;
 }
 
-ListConfProps ConfElement::getProperties() const
+PropConfList ConfElement::getProperties() const
 {
     return m_propList;
 }
 
-ListConfPoints ConfElement::getPoints() const
+PointConfList ConfElement::getPoints() const
 {
     return m_pointList;
 }
 
-ListConfPoints ConfElement::getHiddenPoints() const
+PointConfList ConfElement::getHiddenPoints() const
 {
     return m_hiddenPointList;
 }
@@ -238,7 +238,7 @@ void ConfElement::loadConf()
 
     for (QString line : data.split("\r\n")) {
         line = line.trimmed();
-        size_t size = line.size();
+        int size = line.size();
         if (size < 2)
             continue;
 
@@ -321,7 +321,7 @@ void ConfElement::parseTypes(const QStringList &list)
         QString sec0 = line.section("=", 0, 0).toLower();
         QString sec1 = line.section("=", 1, 1);
         if (sec0 == QLatin1String("class")) {
-            m_class = sec1;
+            m_class = ElementClassString.value(sec1);
         } else if (sec0 == QLatin1String("inherit")) {
             m_inherit = sec1.split(QLatin1Char(','), QString::SkipEmptyParts);
         } else if (sec0 == QLatin1String("sub")) {
@@ -375,9 +375,9 @@ void ConfElement::parseProperties(const QStringList &list)
         uchar countPipe = 0;
         uchar countSharp = 0;
 
-        size_t outIndex = line.size();
+        int outIndex = line.size();
 
-        for (size_t i = 0; i <= outIndex; ++i) {
+        for (int i = 0; i <= outIndex; ++i) {
             if (i == outIndex) {
                 if (beginGroupLine) {
                     m_group.insert(nameGroup, descGroup);
@@ -391,7 +391,7 @@ void ConfElement::parseProperties(const QStringList &list)
                     }
                 }
 
-                SharedConfProp prop = SharedConfProp::create();
+                SharedPropConf prop = SharedPropConf::create();
                 prop->name = name;
                 prop->desc = desc;
                 prop->type = DataType(type.toInt());
@@ -482,10 +482,10 @@ void ConfElement::parsePoints(const QStringList &list)
         bool equalSign = false;
         uchar countPipe = 0;
 
-        const size_t outIndex = line.size();
-        for (size_t i = 0; i <= outIndex; ++i) {
+        const int outIndex = line.size();
+        for (int i = 0; i <= outIndex; ++i) {
             if (i == outIndex) {
-                SharedConfPoint point = SharedConfPoint::create();
+                SharedPointConf point = SharedPointConf::create();
                 point->name = name;
                 point->desc = desc;
                 point->prop = prop;

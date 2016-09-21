@@ -49,6 +49,9 @@ private:
     QString m_projectName;
     QString m_compiler;
 
+signals:
+    void onError(QString);
+
 public:
     explicit SceneModel(PackageManager *package, QObject *parent = 0);
     virtual ~SceneModel();

@@ -17,6 +17,7 @@ SHALoader::SHALoader(const QString &filePath, SceneModel *model, QObject *parent
     , m_filePath(filePath)
     , m_model(model)
 {
+
 }
 
 SHALoader::SHALoader(SceneModel *model, QObject *parent)
@@ -31,22 +32,22 @@ bool SHALoader::loadSha()
     QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
         return false;
-    const QStringList tmpContent = QString::fromLocal8Bit(file.readAll()).split("\r\n");
+    const QStringList &tmpContent = QString::fromLocal8Bit(file.readAll()).split("\r\n");
     for (const QString &s : tmpContent) {
         const QString tmp = s.trimmed();
         if (!tmp.isEmpty())
             m_content << tmp;
     }
 
+    if (!parseHeader())
+        return false;
+
+    Container *c = parseElements();
+    if (!c)
+        return false;
+
+    m_model->setRootContainer(c);
     return true;
-}
-
-bool SHALoader::parse()
-{
-    parseHeader();
-
-    m_model->setRootContainer(parseElements());
-    return false;
 }
 
 QString SHALoader::getFilePath() const
@@ -305,7 +306,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
         case LineType::Add: {
             QStringList params = findBlock(sline, "Add(", ")").split(',');
             if (params.size() < 4) {
-                qWarning() << "К-во аргументов меньше 4-х.";
+                emit onError("К-во аргументов меньше 4-х.");
                 return nullptr;
             }
 
@@ -321,7 +322,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
         case LineType::Link: {
             const QVariantMap link = linkToVariantMap(sline);
             if (link.isEmpty()) {
-                qWarning() << "Ошибка при разборе параметров link(*)";
+                emit onError("Ошибка при разборе параметров link(*)");
                 return nullptr;
             }
             //linkList.append(link);
@@ -330,9 +331,11 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
         case LineType::Point: {
             const QString point = findBlock(sline, "(", ")");
             if (!point.isEmpty()) {
-                //pointList << point;
-            } else
-                qWarning() << "Ошибка при разборе параметров Point(*)";
+                //element->addPoint(point);
+            } else {
+                emit onError("Ошибка при разборе параметров Point(*)");
+                return nullptr;
+            }
 
             continue;
         }
@@ -341,8 +344,10 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
             const QVariantMap prop = propToVariantMap(sline);
             if (!prop.isEmpty()) {
                 //propList << prop;
-            } else
-                qWarning() << "Ошибка при разборе свойства";
+            } else {
+                emit onError("Ошибка при разборе свойства");
+                return nullptr;
+            }
 
             continue;
         }
@@ -350,6 +355,9 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
             //Элемент является контейнером
             if (getLineType(m_content, i + 1) == LineType::BEGIN_SDK) {
                 Container *c = parseElements(i + 2, size, &i);
+                if (!c)
+                    return nullptr;
+
                 element->addContainer(c);
             }
 

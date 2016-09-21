@@ -166,7 +166,7 @@ enum ElementClass {
     //ru Шаблон документа.
     CI_DocumentTemplate
 };
-const static QMap<qint32, QString> ElementClassMap{
+const static QMap<ElementClass, QString> ElementClassMap{
     {CI_Element, "CI_Element"},
     {CI_DPElement, "CI_DPElement"},
     {CI_MultiElement, "CI_MultiElement"},
@@ -186,6 +186,27 @@ const static QMap<qint32, QString> ElementClassMap{
     {CI_Translate, "CI_Translate"},
     {CI_PolyMulti, "CI_PolyMulti"},
     {CI_DocumentTemplate, "CI_DocumentTemplate"}};
+
+const static QMap<QString, ElementClass> ElementClassString{
+    {"Element", CI_Element},
+    {"DPElement", CI_DPElement},
+    {"MultiElement", CI_MultiElement},
+    {"EditMulti", CI_EditMulti},
+    {"EditMultiEx", CI_EditMultiEx},
+    {"InlineCode", CI_InlineCode},
+    {"DrawElement", CI_DrawElement},
+    {"AS_Special", CI_AS_Special},
+    {"DPLElement", CI_DPLElement},
+    {"UseHiDLL", CI_UseHiDLL},
+    {"WinElement", CI_WinElement},
+    {"PointHint", CI_PointHint},
+    {"PointElement", CI_PointElement},
+    {"LineBreak", CI_LineBreak},
+    {"LineBreakEx", CI_LineBreakEx},
+    {"UserElement", CI_UserElement},
+    {"Translate", CI_Translate},
+    {"PolyMulti", CI_PolyMulti},
+    {"DocumentTemplate", CI_DocumentTemplate}};
 
 //!ru Индексы параметров среды - GetParam()
 enum CgtParams {

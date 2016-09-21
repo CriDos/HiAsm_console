@@ -42,14 +42,9 @@ qint32 Element::getUserData() const
     return m_userData;
 }
 
-void Element::setClassIndex(ElementClass classIndex)
-{
-    m_classIndex = classIndex;
-}
-
 ElementClass Element::getClassIndex()
 {
-    return m_classIndex;
+    return m_conf->getClass();
 }
 
 void Element::setFlags(const ElementFlgs &flags)
@@ -60,16 +55,6 @@ void Element::setFlags(const ElementFlgs &flags)
 ElementFlags Element::getFlags() const
 {
     return ElementFlags(qint32(m_flags));
-}
-
-void Element::setGroup(qint32 group)
-{
-    m_group = group;
-}
-
-qint32 Element::getGroup() const
-{
-    return m_group;
 }
 
 void Element::setLinkIs(bool linkIs)
@@ -132,14 +117,9 @@ qint32 Element::getSizeH() const
     return m_sizeH;
 }
 
-void Element::setClassName(const QString &className)
-{
-    m_className = className;
-}
-
 QString Element::getClassName() const
 {
-    return m_className;
+    return m_conf->getName();
 }
 
 void Element::setCodeName(const QString &name)
@@ -152,34 +132,19 @@ QString Element::getCodeName() const
     return m_codeName;
 }
 
-void Element::setInterface(const QString &interface)
+QString Element::getInterfaces() const
 {
-    m_interface = interface;
-}
-
-QString Element::getInterface() const
-{
-    return m_interface;
-}
-
-void Element::setInherit(const QString &inherit)
-{
-    m_inherit = inherit;
+    return m_conf->getInterfaces();
 }
 
 QString Element::getInherit() const
 {
-    return m_inherit;
-}
-
-void Element::setInfSub(const QString &infSub)
-{
-    m_infSub = infSub;
+    return m_conf->getInherits().join(',');
 }
 
 QString Element::getInfSub() const
 {
-    return m_infSub;
+    return m_conf->getSub();
 }
 
 int Element::getCountContainers() const
