@@ -84,10 +84,10 @@ const char *SceneModel::addStreamRes(Property *prop)
     QString nameTypeRes;
     QString fileName;
     QString ext;
-    const Value &v = prop->getValue();
+    const Value *v = prop->value();
     switch (prop->getType()) {
     case data_icon: {
-        if (v.isNull())
+        if (v->isNull())
             return fcgt::strToCString("ASMA");
 
         nameTypeRes = "ICON";
@@ -102,7 +102,7 @@ const char *SceneModel::addStreamRes(Property *prop)
         break;
     }
     case data_bitmap: {
-        if (v.isNull())
+        if (v->isNull())
             return nullptr;
 
         nameTypeRes = "BITMAP";
@@ -120,7 +120,7 @@ const char *SceneModel::addStreamRes(Property *prop)
     QString SEP = QDir::separator();
     QString CURRENT_PATH = QDir::currentPath();
 
-    QByteArray resData = v.toByteArray();
+    QByteArray resData = v->toByteArray();
     QString suffix = QString::number(m_resourcesForCompile.size());
     QString fileNameRes = fileName + suffix;
     QString fullFileNameRes = fileName + suffix + ext;

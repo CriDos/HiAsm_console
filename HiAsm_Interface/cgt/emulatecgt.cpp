@@ -225,31 +225,31 @@ static const char *EXPORT propGetName(Property *prop)
 //! Возвращает значение свойства в виде указателя на данные.
 static const Value *EXPORT propGetValue(Property *prop)
 {
-    return prop->getPtrValue();
+    return prop->value();
 }
 
 //! Возвращает значение свойства в формате uchar.
 static uchar EXPORT propToByte(Property *prop)
 {
-    return prop->toByte();
+    return prop->value()->toByte();
 }
 
 //! Возвращает значение свойства в формате int.
 static int EXPORT propToInteger(Property *prop)
 {
-    return prop->toInt();
+    return prop->value()->toInt();
 }
 
 //! Возвращает значение свойства в формате qreal.
 static qreal EXPORT propToReal(Property *prop)
 {
-    return prop->toReal();
+    return prop->value()->toReal();
 }
 
 //! Возвращает значение свойства в виде C строки.
 static const char *EXPORT propToString(Property *prop)
 {
-    return fcgt::strToCString(prop->toString());
+    return fcgt::strToCString(prop->value()->toString());
 }
 
 //!~~~~~~~~~~~~~~~~~~~~~~~~ ресурсы ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -576,7 +576,7 @@ static Element *EXPORT propGetLinkedElement(Element *element, const char *propNa
     if (!p)
         return nullptr;
 
-    const SharedLinkedElementInfo info = p->toLinkedElementInfo();
+    const SharedLinkedElementInfo &info = p->value()->toLinkedElementInfo();
     if (!info)
         return nullptr;
 
@@ -601,7 +601,7 @@ static int EXPORT propIsTranslate(Element *element, Property *prop)
 static Element *EXPORT propGetLinkedElementInfo(Element *element, Property *prop, char *buf)
 {
     Q_UNUSED(element)
-    const SharedLinkedElementInfo &info = prop->toLinkedElementInfo();
+    const SharedLinkedElementInfo &info = prop->value()->toLinkedElementInfo();
     if (!info)
         return 0;
 

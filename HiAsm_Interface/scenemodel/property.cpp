@@ -13,10 +13,10 @@
 #include <QDebug>
 #include <QUuid>
 
-Property::Property(DataType type, const QVariant &data, const QString &name)
+Property::Property(DataType type, const QVariant &data, const QString &name, QObject *parent)
+    : QObject(parent)
 {
     m_name = name;
-    m_type = type;
     m_value.setType(type);
     m_value.setValue(data);
 }
@@ -38,17 +38,12 @@ Element *Property::getParent() const
 
 void Property::setType(DataType type)
 {
-    m_type = type;
+    m_value.setType(type);
 }
 
 DataType Property::getType() const
 {
-    return m_type;
-}
-
-void Property::setIsDefProp(bool value)
-{
-    m_isDefProp = value;
+    return m_value.getType();
 }
 
 bool Property::getIsDefProp() const
@@ -61,37 +56,7 @@ void Property::setValue(const QVariant &data)
     m_value.setValue(data);
 }
 
-Value Property::getValue() const
-{
-    return m_value;
-}
-
-const Value *Property::getPtrValue() const
+Value *Property::value()
 {
     return &m_value;
-}
-
-uchar Property::toByte() const
-{
-    return m_value.toByte();
-}
-
-qint32 Property::toInt() const
-{
-    return m_value.toInt();
-}
-
-qreal Property::toReal() const
-{
-    return m_value.toReal();
-}
-
-QString Property::toString() const
-{
-    return m_value.toString();
-}
-
-SharedLinkedElementInfo Property::toLinkedElementInfo() const
-{
-    return m_value.toLinkedElementInfo();
 }

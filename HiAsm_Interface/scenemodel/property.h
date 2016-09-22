@@ -21,7 +21,6 @@ class Property : public QObject
 private:
     //Self
     QString m_name;
-    DataType m_type{};
     bool m_isDefProp{};
 
     //Value
@@ -30,14 +29,14 @@ private:
 public:
     explicit Property(DataType type = data_null,
                       const QVariant &data = QVariant(),
-                      const QString &name = QString());
+                      const QString &name = QString(),
+                      QObject *parent = 0);
 
 public:
     //Self
     void setName(const QString &name);
     QString getName() const;
     Element *getParent() const;
-    void setIsDefProp(bool value);
     bool getIsDefProp() const;
 
     void setType(DataType type);
@@ -45,11 +44,5 @@ public:
 
     //Value
     void setValue(const QVariant &data);
-    Value getValue() const;
-    const Value *getPtrValue() const;
-    uchar toByte() const;
-    qint32 toInt() const;
-    qreal toReal() const;
-    QString toString() const;
-    SharedLinkedElementInfo toLinkedElementInfo() const;
+    Value *value();
 };

@@ -34,9 +34,8 @@ public:
 typedef QSharedPointer<ArrayValue> SharedArrayValue;
 Q_DECLARE_METATYPE(SharedArrayValue)
 
-class Element;
 struct LinkedElementInfo {
-    Element *element{};
+    class Element *element{};
     QString interface;
 };
 typedef QSharedPointer<LinkedElementInfo> SharedLinkedElementInfo;
