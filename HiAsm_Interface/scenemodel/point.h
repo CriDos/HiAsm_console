@@ -2,6 +2,7 @@
 
 //Project
 #include "cgt/CGTShare.h"
+#include "package/types.h"
 
 //STL
 
@@ -19,6 +20,7 @@ class Point : public QObject
 
 private:
     //Self
+    const SharedPointConf m_conf;
     PointType m_type{};
     DataType m_dataType{};
     QString m_name;
@@ -30,7 +32,7 @@ private:
     } m_connectPoint;
 
 public:
-    explicit Point(QObject *parent);
+    explicit Point(const SharedPointConf conf, QObject *parent);
 
 public:
     //Self

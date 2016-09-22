@@ -9,8 +9,9 @@
 
 //Qt
 
-Point::Point(QObject *parent)
+Point::Point(const SharedPointConf conf, QObject *parent)
     : QObject(parent)
+    , m_conf(conf)
 {
 }
 

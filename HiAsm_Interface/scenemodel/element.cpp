@@ -20,6 +20,15 @@ Element::Element(const QString &name, int id_element, int X, int Y, QObject *par
 
     Package *package = SceneModel::getPackage();
     m_conf = package->getElementByName(name);
+    copyFromConf();
+}
+
+void Element::copyFromConf()
+{
+    const PointConfList &list = m_conf->getPoints();
+    for (const SharedPointConf &p : list) {
+        addPoint(p);
+    }
 }
 
 qint32 Element::getId() const
@@ -220,9 +229,9 @@ Point *Element::getPointByName(const QString &name) const
     return nullptr;
 }
 
-Point *Element::addPoint(Point *point)
+Point *Element::addPoint(const SharedPointConf conf)
 {
-    m_points.append(point);
+    m_points.append();
     return point;
 }
 

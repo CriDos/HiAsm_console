@@ -46,6 +46,9 @@ private:
 public:
     explicit Element(const QString &name, int id_element, int X, int Y, QObject *parent);
 
+private:
+    void copyFromConf();
+
 public:
     //Self
     qint32 getId() const;
@@ -98,7 +101,7 @@ public:
     int getPointIndexOfType(const Point *point) const;
     Point *getPointByIndex(int index) const;
     Point *getPointByName(const QString &name) const;
-    Point *addPoint(Point *point);
+    Point *addPoint(const SharedPointConf conf);
     void removePoint(int index);
 
     //Property
