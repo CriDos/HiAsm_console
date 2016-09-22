@@ -15,6 +15,13 @@ Point::Point(const SharedPointConf conf, QObject *parent)
 {
 }
 
+void Point::copyFromConf()
+{
+    m_name = m_conf->name;
+    //m_p
+    m_desc = m_conf->desc;
+}
+
 Element *Point::getParent() const
 {
     return qobject_cast<Element *>(parent());
@@ -67,12 +74,12 @@ QString Point::getDpeName() const
 
 void Point::setInfo(const QString &info)
 {
-    m_info = info;
+    m_desc = info;
 }
 
 QString Point::getInfo() const
 {
-    return m_info;
+    return m_desc;
 }
 
 Point *Point::getLinkPoint() const

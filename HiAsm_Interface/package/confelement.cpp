@@ -283,9 +283,9 @@ void ConfElement::loadConf()
             secPoints << line;
             break;
         default: {
-            //qWarning(qUtf8Printable("При загрузке конфигурации элемента, найден неизвестный параметр."));
-            //qWarning("Файл: \"%s\"", qUtf8Printable(m_pathConf));
-            //qWarning("Параметр: \"%s\"", qUtf8Printable(line));
+            qWarning(qUtf8Printable("При загрузке конфигурации элемента, найден неизвестный параметр."));
+            qWarning("Файл: \"%s\"", qUtf8Printable(m_pathConf));
+            qWarning("Параметр: \"%s\"", qUtf8Printable(line));
             break;
         }
         }
@@ -471,7 +471,6 @@ void ConfElement::parsePoints(const QStringList &list)
         //ConfPoint
         QString name;
         QString desc;
-        QString prop;
         QString dataType;
         QString pointType;
         bool hidden = false;
@@ -488,7 +487,6 @@ void ConfElement::parsePoints(const QStringList &list)
                 SharedPointConf point = SharedPointConf::create();
                 point->name = name;
                 point->desc = desc;
-                point->prop = prop;
                 point->pointType = PointType(pointType.toInt());
                 point->dataType = DataType(dataType.toInt());
 
@@ -511,6 +509,7 @@ void ConfElement::parsePoints(const QStringList &list)
                 else
                     propEnd = true;
 
+                name += c;
                 continue;
             }
             if (c == QLatin1Char('=')) {
@@ -522,7 +521,7 @@ void ConfElement::parsePoints(const QStringList &list)
                 continue;
             }
             if (propBegin && !propEnd) {
-                prop += c;
+                name += c;
                 continue;
             }
             if (countPipe) {

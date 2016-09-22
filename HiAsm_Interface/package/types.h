@@ -12,10 +12,17 @@
 #include <QSharedPointer>
 
 struct PointConf {
+    /// Название точки.
+    /// %prop% - название свойства, значение которого будет использоваться в имени точки.
     QString name;
-    QString prop;
+
+    /// Описание точки.
     QString desc;
+
+    /// Тип точки.
     PointType pointType;
+
+    /// Тип данных точки.
     DataType dataType;
 };
 typedef QSharedPointer<PointConf> SharedPointConf;

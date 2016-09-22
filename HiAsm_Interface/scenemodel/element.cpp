@@ -231,8 +231,9 @@ Point *Element::getPointByName(const QString &name) const
 
 Point *Element::addPoint(const SharedPointConf conf)
 {
-    m_points.append();
-    return point;
+    Point *p = new Point(conf, this);
+    m_points.append(p);
+    return p;
 }
 
 void Element::removePoint(int index)

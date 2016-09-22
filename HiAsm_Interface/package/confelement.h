@@ -11,7 +11,7 @@
 
 class ConfElement
 {
-public:
+private:
     enum TypeSection {
         ts_undefine,
         ts_abouts,

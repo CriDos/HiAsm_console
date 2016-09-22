@@ -25,7 +25,7 @@ private:
     DataType m_dataType{};
     QString m_name;
     QString m_dpeName;
-    QString m_info;
+    QString m_desc;
     struct {
         qint32 elementId{};
         QString namePoint;
@@ -33,6 +33,9 @@ private:
 
 public:
     explicit Point(const SharedPointConf conf, QObject *parent);
+
+private:
+    void copyFromConf();
 
 public:
     //Self

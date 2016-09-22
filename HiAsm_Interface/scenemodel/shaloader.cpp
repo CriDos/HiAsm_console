@@ -17,7 +17,6 @@ SHALoader::SHALoader(const QString &filePath, SceneModel *model, QObject *parent
     , m_filePath(filePath)
     , m_model(model)
 {
-
 }
 
 SHALoader::SHALoader(SceneModel *model, QObject *parent)
@@ -306,7 +305,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
         case LineType::Add: {
             QStringList params = findBlock(sline, "Add(", ")").split(',');
             if (params.size() < 4) {
-                emit onError("К-во аргументов меньше 4-х.");
+                qWarning() << "К-во аргументов меньше 4-х.";
                 return nullptr;
             }
 
@@ -322,7 +321,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
         case LineType::Link: {
             const QVariantMap link = linkToVariantMap(sline);
             if (link.isEmpty()) {
-                emit onError("Ошибка при разборе параметров link(*)");
+                qWarning() << "Ошибка при разборе параметров link(*)";
                 return nullptr;
             }
             //linkList.append(link);
@@ -333,7 +332,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
             if (!point.isEmpty()) {
                 //element->addPoint(point);
             } else {
-                emit onError("Ошибка при разборе параметров Point(*)");
+                qWarning() << "Ошибка при разборе параметров Point(*)";
                 return nullptr;
             }
 
@@ -345,8 +344,8 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
             if (!prop.isEmpty()) {
                 //propList << prop;
             } else {
-                emit onError("Ошибка при разборе свойства");
-                return nullptr;
+                qWarning() << "Ошибка при разборе свойства";
+                //return nullptr;
             }
 
             continue;
