@@ -66,6 +66,7 @@ private:
     void loadConf();
     void parseAbout(const QStringList &list);
     void parseTypes(const QStringList &list);
+    void parsePropValue(const QString &sline, SharedPropConf conf);
     void parseProperties(const QStringList &list);
     void parsePoints(const QStringList &list);
     Value confPropToValue(const QString &_value, const QStringList &_list, DataType _propType);

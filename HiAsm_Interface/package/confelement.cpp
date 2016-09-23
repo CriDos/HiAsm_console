@@ -341,6 +341,84 @@ void ConfElement::parseTypes(const QStringList &list)
     }
 }
 
+void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
+{
+    const QString notImplemented = QString("Загрузка свойств с типом %1 не реализована.");
+    Value &value = conf->value;
+
+    QStringList list = sline.split('|');
+    if (list.isEmpty())
+        return;
+    value.setType(DataType(list.at(0).toInt()));
+    list.removeFirst();
+
+    switch (value.getType()) {
+    case data_null:
+        break;
+    case data_int: {
+        if (!list.isEmpty())
+            value.setValue(list.first().toInt());
+        else
+            value.setValue(0);
+        break;
+    }
+    case data_real: {
+        int di = 0;
+        if (list.isEmpty())
+            di = list.first().toInt();
+        conf->value.setValue(di);
+        break;
+    }
+    case data_str:
+        conf->setValue(_value);
+        break;
+    case data_combo:
+    case data_comboEx: {
+        //TODO: ЕПТЫТЬ, номер строки по-умолчанию где??? доработать
+        conf->setValue(_list);
+        break;
+    }
+    case data_element: {
+        if (!_value.isEmpty()) {
+            QStringList list = _list;
+            list.insert(0, _value);
+            conf->setValue(list);
+
+            break;
+        }
+
+        conf->setValue(_list);
+        break;
+    }
+    case data_jpeg:
+    case data_icon:
+    case data_bitmap:
+    case data_stream:
+    case data_wave:
+    case data_array:
+    case data_list:
+    //break;
+
+    case data_color:
+    case data_flags:
+    case data_data:
+    case data_font:
+
+    case data_script:
+
+    case data_matr:
+
+    case data_menu:
+
+    case data_code:
+
+    case data_object:
+        if (!_list.isEmpty())
+            qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
+        //qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
+    }
+}
+
 void ConfElement::parseProperties(const QStringList &list)
 {
     //##имя_группы=описание
@@ -361,11 +439,7 @@ void ConfElement::parseProperties(const QStringList &list)
         //ConfProp
         QString name;
         QString desc;
-        QString value;
-        QString valueList;
-        QString type;
-        bool makePoint = false;
-        bool activated = false;
+        SharedPropConf prop = SharedPropConf::create();
 
         //PropGroup
         QString descGroup;
@@ -373,11 +447,9 @@ void ConfElement::parseProperties(const QStringList &list)
         //Parser
         bool equalSign = false;
         bool beginGroupLine = false;
-        uchar countPipe = 0;
         uchar countSharp = 0;
 
         int outIndex = line.size();
-
         for (int i = 0; i <= outIndex; ++i) {
             if (i == outIndex) {
                 if (beginGroupLine) {
@@ -391,20 +463,6 @@ void ConfElement::parseProperties(const QStringList &list)
                         continue;
                     }
                 }
-
-                SharedPropConf prop = SharedPropConf::create();
-                prop->name = name;
-                prop->desc = desc;
-                prop->type = DataType(type.toInt());
-                auto splitValues = valueList.split(QLatin1Char(','), QString::SkipEmptyParts);
-                prop->value = confPropToValue(value, splitValues, prop->type);
-
-                if (beginGroup)
-                    prop->group = nameGroup;
-                prop->activated = activated;
-                prop->makePoint = makePoint;
-
-                m_propList << prop;
                 break;
             }
             const QChar &c = line[i];
@@ -414,20 +472,16 @@ void ConfElement::parseProperties(const QStringList &list)
                     ++countSharp;
                     continue;
                 } else if (c == QLatin1Char('@')) {
-                    makePoint = true;
+                    prop->makePoint = true;
                     continue;
-                } else if (!makePoint && c == QLatin1Char('+')) {
-                    activated = true;
+                } else if (c == QLatin1Char('+')) {
+                    prop->activated = true;
                     continue;
                 }
             }
 
             if (c == QLatin1Char('=')) {
                 equalSign = true;
-                continue;
-            }
-            if (c == QLatin1Char('|')) {
-                ++countPipe;
                 continue;
             }
 
@@ -447,21 +501,21 @@ void ConfElement::parseProperties(const QStringList &list)
                 continue;
             }
 
-            if (countPipe) {
-                if (countPipe == 1) //Тип
-                    type += c;
-                else if (countPipe == 2) //Значение
-                    value += c;
-                else if (countPipe == 3) //Список значений
-                    valueList += c;
-
-                continue;
-            }
-
             if (!equalSign)
                 name += c; //Имя свойства
             else
                 desc += c; //Описание свойства
+
+            if (c == QLatin1Char('|')) {
+                parsePropValue(line.right(outIndex - i - 1), prop);
+                break;
+            }
+
+            prop->name = name;
+            prop->desc = desc;
+            if (beginGroup)
+                prop->group = nameGroup;
+            m_propList << prop;
         }
     }
 }
@@ -540,71 +594,4 @@ void ConfElement::parsePoints(const QStringList &list)
                 desc += c; //Описание точки
         }
     }
-}
-
-Value ConfElement::confPropToValue(const QString &_value, const QStringList &_list, DataType _propType)
-{
-    const QString notImplemented = QString("Загрузка свойств с типом %1 не реализована.");
-
-    Value value;
-    value.setType(_propType);
-
-    switch (_propType) {
-    case data_null:
-        break;
-    case data_int:
-        value.setValue(_value.toInt());
-        break;
-    case data_real:
-        value.setValue(_value.toDouble());
-        break;
-    case data_str:
-        value.setValue(_value);
-        break;
-    case data_combo:
-    case data_comboEx: {
-        //TODO: ЕПТЫТЬ, номер строки по-умолчанию где??? доработать
-        value.setValue(_list);
-        break;
-    }
-    case data_element: {
-        if (!_value.isEmpty()) {
-            QStringList list = _list;
-            list.insert(0, _value);
-            value.setValue(list);
-
-            break;
-        }
-
-        value.setValue(_list);
-        break;
-    }
-    case data_jpeg:
-    case data_icon:
-    case data_bitmap:
-    case data_stream:
-    case data_wave:
-    case data_array:
-    case data_list:
-    //break;
-
-    case data_color:
-    case data_flags:
-    case data_data:
-    case data_font:
-
-    case data_script:
-
-    case data_matr:
-
-    case data_menu:
-
-    case data_code:
-
-    case data_object:
-        if (!_list.isEmpty())
-            qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
-        //qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
-    }
-    return value;
 }

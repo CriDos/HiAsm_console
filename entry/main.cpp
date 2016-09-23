@@ -42,9 +42,6 @@ int main(int argc, char *argv[])
 
     PackageManager *manager = new PackageManager();
     SceneModel *model = new SceneModel(manager);
-    QObject::connect(model, &SceneModel::onError, [](QString s) {
-        qWarning().noquote() << s;
-    });
 
     if (!model->loadFromSha("test.sha")) {
         qWarning() << "Ошибка загрузки файла схемы.";

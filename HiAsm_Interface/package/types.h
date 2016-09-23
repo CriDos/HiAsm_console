@@ -33,7 +33,7 @@ struct PropConf { //-V802
     QString name;
     QString desc;
     Value value;
-    QStringList valueList;
+    int defLine{};
     QString group;
     DataType type{};
     bool makePoint = false;

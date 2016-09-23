@@ -48,9 +48,6 @@ private:
     QString m_filePath;
     SceneModel *m_model;
 
-signals:
-    void onError(QString);
-
 public:
     explicit SHALoader(const QString &filePath, SceneModel *model, QObject *parent = 0);
     explicit SHALoader(SceneModel *model, QObject *parent = 0);
