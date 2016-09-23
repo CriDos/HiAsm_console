@@ -344,42 +344,38 @@ void ConfElement::parseTypes(const QStringList &list)
 void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
 {
     const QString notImplemented = QString("Загрузка свойств с типом %1 не реализована.");
-    Value &value = conf->value;
-    if (sline.isEmpty())
-        return;
-
-    QString test = "2|";
-    QStringList list = test.split(QLatin1Char('|'), QString::SkipEmptyParts);
+    //if (sline.isEmpty())
+    //    return;
+    QStringList list = {"2"};
     if (list.isEmpty())
         return;
 
     const auto type = DataType(list[0].toInt());
-    value.setType(type);
-    if (!list.isEmpty())
-        list.removeAt(0);
+    conf->value.setType(type);
+    list.removeFirst();
 
     switch (type) {
     case data_null:
         break;
     case data_int: {
         if (!list.isEmpty())
-            value.setValue(list.first().toInt());
+            conf->value.setValue(list.first().toInt());
         else
-            value.setValue(0);
+            conf->value.setValue(0);
         break;
     }
     case data_real: {
         double dr = 0.0;
-        if (list.isEmpty())
+        if (!list.isEmpty())
             dr = list.first().toDouble();
-        value.setValue(dr);
+        conf->value.setValue(dr);
         break;
     }
     case data_str: {
         QString ds;
-        if (list.isEmpty())
+        if (!list.isEmpty())
             ds = list.first();
-        value.setValue(ds);
+        conf->value.setValue(ds);
         break;
     }
     case data_combo:
@@ -389,7 +385,7 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
             break;
         }
         conf->defLine = list.first().toInt();
-        value.setValue(list.last().split(','));
+        conf->value.setValue(list.last().split(','));
         break;
     }
     case data_element: {
@@ -416,9 +412,9 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
 
     case data_color: {
         QString ds;
-        if (list.isEmpty())
+        if (!list.isEmpty())
             ds = list.first();
-        value.setValue(ds);
+        conf->value.setValue(ds);
         break;
     }
 
@@ -449,8 +445,7 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
     case data_code:
 
     case data_object:
-        if (!list.isEmpty())
-            qWarning().noquote() << notImplemented.arg(DataTypeMap[type]);
+        qWarning().noquote() << notImplemented.arg(DataTypeMap[type]);
         //qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
     }
 }
