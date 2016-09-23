@@ -22,6 +22,11 @@ private:
     DataType m_type = data_null;
 
 public:
+    explicit ArrayValue(DataType type)
+        : m_type(type)
+    {
+    }
+
     DataType getType() const
     {
         return m_type;

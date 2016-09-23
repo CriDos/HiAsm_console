@@ -345,7 +345,7 @@ Container *SHALoader::parseElements(int begin, int _size, int *prev)
                 //propList << prop;
             } else {
                 qWarning() << "Ошибка при разборе свойства";
-                //return nullptr;
+                return nullptr;
             }
 
             continue;

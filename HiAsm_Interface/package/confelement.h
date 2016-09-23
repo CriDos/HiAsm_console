@@ -68,6 +68,7 @@ private:
     void parseTypes(const QStringList &list);
     void parseProperties(const QStringList &list);
     void parsePoints(const QStringList &list);
+    Value confPropToValue(const QString &_value, const QStringList &_list, DataType _propType);
 
 public:
     QString getName() const;

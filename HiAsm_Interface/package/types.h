@@ -2,6 +2,7 @@
 
 //Project
 #include "cgt/CGTShare.h"
+#include "scenemodel/value.h"
 
 //STL
 
@@ -31,7 +32,7 @@ typedef QList<SharedPointConf> PointConfList;
 struct PropConf { //-V802
     QString name;
     QString desc;
-    QString value;
+    Value value;
     QStringList valueList;
     QString group;
     DataType type{};

@@ -2,6 +2,7 @@
 #include "confelement.h"
 #include "package.h"
 #include "cgt/CGTShare.h"
+#include "scenemodel/valuetypes.h"
 
 //STL
 
@@ -361,7 +362,7 @@ void ConfElement::parseProperties(const QStringList &list)
         QString name;
         QString desc;
         QString value;
-        QString listValues;
+        QString valueList;
         QString type;
         bool makePoint = false;
         bool activated = false;
@@ -395,8 +396,9 @@ void ConfElement::parseProperties(const QStringList &list)
                 prop->name = name;
                 prop->desc = desc;
                 prop->type = DataType(type.toInt());
-                prop->value = value;
-                prop->valueList = listValues.split(QLatin1Char(','), QString::SkipEmptyParts);
+                auto splitValues = valueList.split(QLatin1Char(','), QString::SkipEmptyParts);
+                prop->value = confPropToValue(value, splitValues, prop->type);
+
                 if (beginGroup)
                     prop->group = nameGroup;
                 prop->activated = activated;
@@ -451,7 +453,7 @@ void ConfElement::parseProperties(const QStringList &list)
                 else if (countPipe == 2) //Значение
                     value += c;
                 else if (countPipe == 3) //Список значений
-                    listValues += c;
+                    valueList += c;
 
                 continue;
             }
@@ -538,4 +540,71 @@ void ConfElement::parsePoints(const QStringList &list)
                 desc += c; //Описание точки
         }
     }
+}
+
+Value ConfElement::confPropToValue(const QString &_value, const QStringList &_list, DataType _propType)
+{
+    const QString notImplemented = QString("Загрузка свойств с типом %1 не реализована.");
+
+    Value value;
+    value.setType(_propType);
+
+    switch (_propType) {
+    case data_null:
+        break;
+    case data_int:
+        value.setValue(_value.toInt());
+        break;
+    case data_real:
+        value.setValue(_value.toDouble());
+        break;
+    case data_str:
+        value.setValue(_value);
+        break;
+    case data_combo:
+    case data_comboEx: {
+        //TODO: ЕПТЫТЬ, номер строки по-умолчанию где??? доработать
+        value.setValue(_list);
+        break;
+    }
+    case data_element: {
+        if (!_value.isEmpty()) {
+            QStringList list = _list;
+            list.insert(0, _value);
+            value.setValue(list);
+
+            break;
+        }
+
+        value.setValue(_list);
+        break;
+    }
+    case data_jpeg:
+    case data_icon:
+    case data_bitmap:
+    case data_stream:
+    case data_wave:
+    case data_array:
+    case data_list:
+    //break;
+
+    case data_color:
+    case data_flags:
+    case data_data:
+    case data_font:
+
+    case data_script:
+
+    case data_matr:
+
+    case data_menu:
+
+    case data_code:
+
+    case data_object:
+        if (!_list.isEmpty())
+            qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
+        //qWarning().noquote() << notImplemented.arg(DataTypeMap[_propType]);
+    }
+    return value;
 }
