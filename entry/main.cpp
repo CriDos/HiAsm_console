@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
         qWarning() << "Ошибка загрузки файла схемы.";
         return 0;
     }
+    return 0;
 
     const QString codeGenFile = "CodeGen.dll";
     const QString makeExe = "make_exe.dll";

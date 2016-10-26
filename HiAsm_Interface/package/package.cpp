@@ -41,7 +41,7 @@ Package::Package(const QString &packagePath, QObject *parent)
     }
 
     //Добавляем информацию из наследуемых элементов
-    addInheritableData();
+    //addInheritableData();
 
     setSuccess(true);
 }

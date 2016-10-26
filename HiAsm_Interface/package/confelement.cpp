@@ -344,9 +344,12 @@ void ConfElement::parseTypes(const QStringList &list)
 void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
 {
     const QString notImplemented = QString("Загрузка свойств с типом %1 не реализована.");
-    //if (sline.isEmpty())
-    //    return;
-    QStringList list = {"2"};
+    auto &value = conf->value;
+
+    if (sline.isEmpty())
+        return;
+
+    QStringList list = sline.split(QLatin1Char('|'), QString::SkipEmptyParts);
     if (list.isEmpty())
         return;
 
@@ -388,18 +391,35 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
         conf->value.setValue(list.last().split(','));
         break;
     }
-    case data_element: {
-        //if (!_value.isEmpty()) {
-        //    QStringList list = _list;
-        //    list.insert(0, _value);
-        //    conf->setValue(list);
-        //
-        //    break;
-        //}
-        //
-        //conf->setValue(_list);
+
+    case data_color: {
+        QString ds;
+        if (!list.isEmpty())
+            ds = list.first();
+        conf->value.setValue(ds);
         break;
     }
+
+    case data_font: {
+        if (list.isEmpty()) {
+            auto font = SharedValueFont::create();
+            font->name = "MS Sans Serif";
+            font->size = 8;
+            font->color = 0;
+            font->style = 0;
+            font->charset = 1;
+            value.setValue(font);
+            break;
+        }
+
+        qInfo() << "test";
+        //if (!list.isEmpty())
+        //    qInfo() << "test";
+        break;
+    }
+    case data_flags:
+        qInfo() << "test";
+        break;
     case data_jpeg:
     case data_icon:
     case data_bitmap:
@@ -410,33 +430,8 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
     case data_data:
         break;
 
-    case data_color: {
-        QString ds;
-        if (!list.isEmpty())
-            ds = list.first();
-        conf->value.setValue(ds);
-        break;
-    }
-
-    case data_flags:
-        qInfo() << "test";
-        break;
-    case data_font: {
-        if (list.isEmpty()) {
-            auto font = SharedValueFont::create();
-            font->name = "MS Sans Serif";
-            font->color = 0;
-            font->size = 0;
-            //value.setValue()
-
-            break;
-        }
-
-        qInfo() << "test";
-        //if (!list.isEmpty())
-        //    qInfo() << "test";
-    }
     case data_script:
+    case data_element:
 
     case data_matr:
 
