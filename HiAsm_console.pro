@@ -28,5 +28,5 @@ DEFINES += APP_COMPANY=\"\\\"$$QMAKE_TARGET_COMPANY\\\"\" \
 SOURCES += $$files($$PWD/"entry/*.cpp", true)
 HEADERS += $$files($$PWD/"entry/*.h", true)
 
-#Подключаем HiAsm_Interface
-include(HiAsm_Interface/HiAsm_Interface.pri)
+#Подключаем HiAsm_engine
+include(HiAsm_engine/HiAsm_engine.pri)
