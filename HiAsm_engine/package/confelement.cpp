@@ -401,24 +401,36 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
     }
 
     case data_font: {
+        auto font = SharedValueFont::create();
         if (list.isEmpty()) {
-            auto font = SharedValueFont::create();
             font->name = "MS Sans Serif";
             font->size = 8;
             font->color = 0;
             font->style = 0;
             font->charset = 1;
-            value.setValue(font);
-            break;
+
+        } else {
+            QStringList fontParams = list[0].split(QLatin1Char(','));
+            if (fontParams.count() >= 5) {
+                font->name = fontParams[0].trimmed();
+                font->size = fontParams[1].toInt();
+                font->color = fontParams[2].toInt();
+                font->style = static_cast<uchar>(fontParams[3].toInt());
+                font->charset = static_cast<uchar>(fontParams[4].toInt());
+            }
         }
 
-        qInfo() << "test";
-        //if (!list.isEmpty())
-        //    qInfo() << "test";
+        value.setValue(font);
         break;
     }
     case data_flags:
-        qInfo() << "test";
+        if (list.size() < 2) {
+            qWarning() << "К-во параметров свойства меньше двух.";
+            break;
+        }
+
+        conf->defLine = list[0].toInt();
+        conf->value.setValue(list[1].split(QLatin1Char(',')));
         break;
     case data_jpeg:
     case data_icon:
@@ -432,7 +444,8 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
 
     case data_script:
     case data_element:
-
+        qInfo() << "test";
+        break;
     case data_matr:
 
     case data_menu:
