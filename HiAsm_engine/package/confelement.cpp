@@ -144,7 +144,7 @@ void ConfElement::addInheritElements(Package *pack)
 {
     for (const QString &name : m_inherit) {
         SharedConfElement e = pack->getElementByName(name);
-        if (!e.isNull())
+        if (!e.isNull() && !m_inheritList.contains(e))
             m_inheritList.append(e);
     }
 }
