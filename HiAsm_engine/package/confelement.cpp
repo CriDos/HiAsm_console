@@ -397,8 +397,8 @@ void ConfElement::parsePropValue(const QString &sline, SharedPropConf conf)
 
     case data_script:
     case data_element:
-        qInfo() << "test";
-        break;
+        //qInfo() << "test";
+        //break;
     case data_matr:
 
     case data_menu:
