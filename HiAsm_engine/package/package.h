@@ -47,7 +47,7 @@ public:
 private:
     bool loadPackageInfo();
     bool loadElements();
-    void addInheritableData();
+    void addInheritElements();
 
 public:
     bool getSuccess() const;

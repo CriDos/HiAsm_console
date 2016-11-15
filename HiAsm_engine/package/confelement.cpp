@@ -140,60 +140,13 @@ void ConfElement::setEditClass(const QString &editClass)
     m_editClass = editClass;
 }
 
-void ConfElement::addInheritableData(Package *pack)
+void ConfElement::addInheritElements(Package *pack)
 {
-    if (m_isInherited && !pack)
-        return;
-
-    PropConfList props;
-    auto containsProp = [&props](const QString &name) {
-        for (const SharedPropConf &prop : props)
-            if (prop->name == name)
-                return true;
-
-        return false;
-    };
-    auto inheritProps = [&props, containsProp](const PropConfList &inheritProps) {
-        for (const SharedPropConf &prop : inheritProps)
-            if (!containsProp(prop->name))
-                props.append(prop);
-    };
-
-    auto containsPoint = [](const PointConfList &points, const QString &name) {
-        for (const SharedPointConf &point : points)
-            if (point->name == name)
-                return true;
-        return false;
-    };
-    auto inheritPoints = [containsPoint](const PointConfList &inheritPoints, PointConfList &points) {
-        for (const SharedPointConf &point : inheritPoints)
-            if (!containsPoint(points, point->name))
-                points.append(point);
-    };
-
-    PointConfList hiddenPoints;
-    PointConfList points;
     for (const QString &name : m_inherit) {
         SharedConfElement e = pack->getElementByName(name);
-        e->addInheritableData(pack);
-
-        m_sub = e->getSub();
-        m_interfaces = e->getInterfaces();
-
-        inheritProps(e->getProperties());
-        inheritPoints(e->getPoints(), points);
-        inheritPoints(e->getHiddenPoints(), hiddenPoints);
+        if (!e.isNull())
+            m_inheritList.append(e);
     }
-
-    inheritProps(m_propList);
-    inheritPoints(m_hiddenPointList, hiddenPoints);
-    inheritPoints(m_pointList, points);
-
-    m_propList = props;
-    m_hiddenPointList = hiddenPoints;
-    m_pointList = points;
-
-    m_isInherited = true;
 }
 
 PropConfList ConfElement::getProperties() const

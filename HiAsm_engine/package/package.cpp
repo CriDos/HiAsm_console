@@ -41,7 +41,7 @@ Package::Package(const QString &packagePath, QObject *parent)
     }
 
     //Добавляем информацию из наследуемых элементов
-    //addInheritableData();
+    addInheritElements();
 
     setSuccess(true);
 }
@@ -207,10 +207,10 @@ bool Package::loadElements()
     return true;
 }
 
-void Package::addInheritableData()
+void Package::addInheritElements()
 {
     for (SharedConfElement &conf : m_confElementList) {
-        conf->addInheritableData(this);
+        conf->addInheritElements(this);
     }
 }
 

@@ -9,6 +9,10 @@
 //Qt
 #include <QtCore>
 
+class ConfElement;
+typedef QSharedPointer<ConfElement> SharedConfElement;
+typedef QList<SharedConfElement> ConfElementList;
+
 class ConfElement
 {
 private:
@@ -38,6 +42,7 @@ private:
     //Type
     ElementClass m_class;
     QStringList m_inherit;
+    ConfElementList m_inheritList;
     QString m_sub;
     QString m_info;
     QString m_propIcon;
@@ -111,11 +116,9 @@ public:
     void setEditClass(const QString &editClass);
 
     //Inherits
-    void addInheritableData(Package *pack);
+    void addInheritElements(Package *pack);
 
     PropConfList getProperties() const;
     PointConfList getPoints() const;
     PointConfList getHiddenPoints() const;
 };
-typedef QSharedPointer<ConfElement> SharedConfElement;
-typedef QList<SharedConfElement> ConfElementList;
